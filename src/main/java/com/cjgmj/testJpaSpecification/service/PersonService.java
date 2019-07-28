@@ -1,11 +1,12 @@
 package com.cjgmj.testJpaSpecification.service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 import com.cjgmj.testJpaSpecification.entity.Person;
+import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 
 public interface PersonService {
 
-	public List<Person> getPersons();
+	public Page<Person> getPersons(FilterRequest filter);
 
 }
