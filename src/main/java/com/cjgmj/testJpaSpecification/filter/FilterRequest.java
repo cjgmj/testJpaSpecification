@@ -15,6 +15,6 @@ public class FilterRequest {
 
 	private List<SearchRequest> search;
 
-	private OrderRequest order;
+	private List<OrderRequest> order;
 
 }

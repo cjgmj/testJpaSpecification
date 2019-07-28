@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.cjgmj.testJpaSpecification.entity.Person;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
+import com.cjgmj.testJpaSpecification.filter.OrderRequest;
 import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.repository.PersonRepository;
@@ -41,6 +42,7 @@ public class PersonServiceImpl implements PersonService {
 	private Specification<Person> filter(FilterRequest filter) {
 		return (person, cq, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
+			List<Order> orders = new ArrayList<>();
 			SearchRequest birthdateFrom = null;
 			SearchRequest birthdateUp = null;
 
@@ -51,7 +53,7 @@ public class PersonServiceImpl implements PersonService {
 					} else if (AttributesFilter.BIRTHDATEUP.equals(search.getField())) {
 						birthdateUp = search;
 					} else {
-						if (search.getValue() != null) {
+						if (search.getField() != null) {
 							Predicate predicate = getPredicate(cb, person, search.getField(), search.getValue());
 
 							if (predicate != null) {
@@ -70,14 +72,19 @@ public class PersonServiceImpl implements PersonService {
 				}
 			}
 
-			if (filter.getOrder() != null) {
-				Order order = getOrder(cb, person, filter.getOrder().getField(), filter.getOrder().getSort());
+			if (!filter.getOrder().isEmpty()) {
+				for (OrderRequest order : filter.getOrder()) {
+					if (order.getField() != null) {
+						Order o = getOrder(cb, person, order.getField(), order.getSort());
 
-				if (order != null) {
-					cq.orderBy(order);
+						if (o != null) {
+							orders.add(o);
+						}
+					}
 				}
 			}
 
+			cq.orderBy(orders.toArray(new Order[orders.size()]));
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
