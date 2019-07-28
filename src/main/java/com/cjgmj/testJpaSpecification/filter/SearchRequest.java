@@ -11,4 +11,5 @@ public class SearchRequest {
 
 	private String field;
 	private String value;
+
 }

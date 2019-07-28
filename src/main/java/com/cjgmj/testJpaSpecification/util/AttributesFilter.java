@@ -15,4 +15,10 @@ public class AttributesFilter {
 	public static final String ASC = "ascending";
 	public static final String DESC = "descending";
 
+	// Format date
+	public static final String FORMATDATE = "yyyy-MM-dd";
+
+	// Like
+	public static final String LIKE = "%";
+
 }
