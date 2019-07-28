@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 
@@ -22,7 +24,7 @@ import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.repository.PersonRepository;
 import com.cjgmj.testJpaSpecification.service.PersonService;
-import com.cjgmj.testJpaSpecification.util.FieldFilter;
+import com.cjgmj.testJpaSpecification.util.AttributesFilter;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -44,9 +46,9 @@ public class PersonServiceImpl implements PersonService {
 
 			if (!filter.getSearch().isEmpty()) {
 				for (SearchRequest search : filter.getSearch()) {
-					if (FieldFilter.BIRTHDATEFROM.equals(search.getField())) {
+					if (AttributesFilter.BIRTHDATEFROM.equals(search.getField())) {
 						birthdateFrom = search;
-					} else if (FieldFilter.BIRTHDATEUP.equals(search.getField())) {
+					} else if (AttributesFilter.BIRTHDATEUP.equals(search.getField())) {
 						birthdateUp = search;
 					} else {
 						if (search.getValue() != null) {
@@ -68,6 +70,14 @@ public class PersonServiceImpl implements PersonService {
 				}
 			}
 
+			if (filter.getOrder() != null) {
+				Order order = getOrder(cb, person, filter.getOrder().getField(), filter.getOrder().getSort());
+
+				if (order != null) {
+					cq.orderBy(order);
+				}
+			}
+
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
@@ -76,15 +86,15 @@ public class PersonServiceImpl implements PersonService {
 		String pattern = "%" + value + "%";
 
 		switch (field) {
-		case FieldFilter.NAME:
+		case AttributesFilter.NAME:
 			return cb.like(person.get("name"), pattern);
-		case FieldFilter.SURNAME:
+		case AttributesFilter.SURNAME:
 			return cb.like(person.get("surname"), pattern);
-		case FieldFilter.JOB:
+		case AttributesFilter.JOB:
 			return cb.like(person.get("job"), pattern);
-		case FieldFilter.EMAIL:
+		case AttributesFilter.EMAIL:
 			return cb.like(person.get("email"), pattern);
-		case FieldFilter.BIRTHDATE:
+		case AttributesFilter.BIRTHDATE:
 			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 			LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
 			return cb.equal(person.<LocalDateTime>get("birthdate"), cb.literal(date));
@@ -108,6 +118,38 @@ public class PersonServiceImpl implements PersonService {
 			LocalDateTime dateU = LocalDate.parse(birthdateUp.getValue(), formatter).atStartOfDay();
 			return cb.between(person.<LocalDateTime>get("birthdate"), cb.literal(dateF), cb.literal(dateU));
 		}
+	}
+
+	private Order getOrder(CriteriaBuilder cb, Root<Person> person, String field, String value) {
+		Expression<?> expression = null;
+
+		switch (field) {
+		case AttributesFilter.NAME:
+			expression = person.get("name");
+			break;
+		case AttributesFilter.SURNAME:
+			expression = person.get("surname");
+			break;
+		case AttributesFilter.JOB:
+			expression = person.get("job");
+			break;
+		case AttributesFilter.EMAIL:
+			expression = person.get("email");
+			break;
+		case AttributesFilter.BIRTHDATE:
+			expression = person.<LocalDateTime>get("birthdate");
+			break;
+		}
+
+		if (expression != null) {
+			if (AttributesFilter.DESC.equals(value)) {
+				return cb.desc(expression);
+			} else {
+				return cb.asc(expression);
+			}
+		}
+
+		return null;
 	}
 
 }
