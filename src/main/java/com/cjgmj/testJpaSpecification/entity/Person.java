@@ -1,6 +1,7 @@
 package com.cjgmj.testJpaSpecification.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 import javax.persistence.Column;
@@ -46,6 +47,9 @@ public class Person implements Serializable {
 	@Email
 	@Column(name = "email", nullable = false)
 	private String email;
+
+	@Column(name = "birthdate", nullable = false)
+	private LocalDateTime birthdate;
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.person")
 	private Set<Reservation> reservations;
