@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import com.cjgmj.testJpaSpecification.entity.Person;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
+import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.repository.PersonRepository;
 import com.cjgmj.testJpaSpecification.service.PersonService;
 import com.cjgmj.testJpaSpecification.util.FieldFilter;
@@ -38,16 +39,33 @@ public class PersonServiceImpl implements PersonService {
 	private Specification<Person> filter(FilterRequest filter) {
 		return (person, cq, cb) -> {
 			List<Predicate> predicates = new ArrayList<>();
-			Predicate predicate = null;
+			SearchRequest birthdateFrom = null;
+			SearchRequest birthdateUp = null;
 
-			if (FieldFilter.BIRTHDATE.equals(filter.getSearch().getField())) {
-				predicate = getDatePredicate(cb, person, filter.getSearch().getValue());
-			} else {
-				predicate = getPredicate(cb, person, filter.getSearch().getField(), filter.getSearch().getValue());
-			}
+			if (!filter.getSearch().isEmpty()) {
+				for (SearchRequest search : filter.getSearch()) {
+					if (FieldFilter.BIRTHDATEFROM.equals(search.getField())) {
+						birthdateFrom = search;
+					} else if (FieldFilter.BIRTHDATEUP.equals(search.getField())) {
+						birthdateUp = search;
+					} else {
+						if (search.getValue() != null) {
+							Predicate predicate = getPredicate(cb, person, search.getField(), search.getValue());
 
-			if (predicate != null) {
-				predicates.add(predicate);
+							if (predicate != null) {
+								predicates.add(predicate);
+							}
+						}
+					}
+				}
+
+				if (birthdateFrom != null || birthdateUp != null) {
+					Predicate predicate = getDatePredicate(cb, person, birthdateFrom, birthdateUp);
+
+					if (predicate != null) {
+						predicates.add(predicate);
+					}
+				}
 			}
 
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
@@ -66,21 +84,30 @@ public class PersonServiceImpl implements PersonService {
 			return cb.like(person.get("job"), pattern);
 		case FieldFilter.EMAIL:
 			return cb.like(person.get("email"), pattern);
+		case FieldFilter.BIRTHDATE:
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
+			return cb.equal(person.<LocalDateTime>get("birthdate"), cb.literal(date));
 		default:
 			return null;
 		}
 	}
 
-	private Predicate getDatePredicate(CriteriaBuilder cb, Root<Person> person, String value) {
-		if (value == null) {
-			return null;
-		}
-
+	private Predicate getDatePredicate(CriteriaBuilder cb, Root<Person> person, SearchRequest birthdateFrom,
+			SearchRequest birthdateUp) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-		LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
-
-		return cb.equal(person.<LocalDateTime>get("birthdate"), cb.literal(date));
+		if (birthdateFrom != null && birthdateUp == null) {
+			LocalDateTime date = LocalDate.parse(birthdateFrom.getValue(), formatter).atStartOfDay();
+			return cb.greaterThanOrEqualTo(person.<LocalDateTime>get("birthdate"), cb.literal(date));
+		} else if (birthdateFrom == null && birthdateUp != null) {
+			LocalDateTime date = LocalDate.parse(birthdateUp.getValue(), formatter).atStartOfDay();
+			return cb.lessThanOrEqualTo(person.<LocalDateTime>get("birthdate"), cb.literal(date));
+		} else {
+			LocalDateTime dateF = LocalDate.parse(birthdateFrom.getValue(), formatter).atStartOfDay();
+			LocalDateTime dateU = LocalDate.parse(birthdateUp.getValue(), formatter).atStartOfDay();
+			return cb.between(person.<LocalDateTime>get("birthdate"), cb.literal(dateF), cb.literal(dateU));
+		}
 	}
 
 }

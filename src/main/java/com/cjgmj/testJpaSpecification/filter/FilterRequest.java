@@ -1,5 +1,7 @@
 package com.cjgmj.testJpaSpecification.filter;
 
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,7 +13,7 @@ public class FilterRequest {
 
 	private PaginationRequest page;
 
-	private SearchRequest search;
+	private List<SearchRequest> search;
 
 	private OrderRequest order;
 
