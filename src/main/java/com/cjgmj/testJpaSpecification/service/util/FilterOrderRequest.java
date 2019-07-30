@@ -1,5 +1,6 @@
 package com.cjgmj.testJpaSpecification.service.util;
 
+import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -58,7 +59,7 @@ public class FilterOrderRequest<T> {
 		};
 	}
 
-	public Predicate getDatePredicate(CriteriaBuilder cb, Root<?> obj, SearchRequest dateFrom, SearchRequest dateUp,
+	public Predicate getDatePredicate(CriteriaBuilder cb, Root<T> obj, SearchRequest dateFrom, SearchRequest dateUp,
 			String field) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
 
@@ -75,18 +76,68 @@ public class FilterOrderRequest<T> {
 		}
 	}
 
+	public Expression<String> caseInsensitiveAccent(Expression<String> expression, CriteriaBuilder cb) {
+		Expression<String> result = expression;
+		result = cb.lower(result);
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("á"), cb.literal("a") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("à"), cb.literal("a") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ä"), cb.literal("a") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("â"), cb.literal("a") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("é"), cb.literal("e") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("è"), cb.literal("e") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ë"), cb.literal("e") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ê"), cb.literal("e") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("í"), cb.literal("i") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ì"), cb.literal("i") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ï"), cb.literal("i") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("î"), cb.literal("i") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ó"), cb.literal("o") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ò"), cb.literal("o") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ö"), cb.literal("o") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ô"), cb.literal("o") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ú"), cb.literal("u") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ù"), cb.literal("u") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ü"), cb.literal("u") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("û"), cb.literal("u") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("ñ"), cb.literal("n") });
+		return result;
+	}
+
 	private Predicate getPredicate(CriteriaBuilder cb, Root<T> obj, String field, String value) {
 		try {
-			String pattern = AttributesFilter.LIKE.concat(value.toLowerCase()).concat(AttributesFilter.LIKE);
+			String pattern = AttributesFilter.LIKE
+					.concat(Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))
+					.concat(AttributesFilter.LIKE);
 
 			if (!isDate(value)) {
-				return cb.like(cb.lower(obj.get(field)), pattern);
+				return cb.like(caseInsensitiveAccent(obj.get(field), cb), pattern);
 			} else {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
 				LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
 				return cb.equal(obj.<LocalDateTime>get(field), cb.literal(date));
 			}
-		} catch (IllegalArgumentException e) {
+		} catch (NullPointerException | IllegalArgumentException e) {
 			return null;
 		}
 	}

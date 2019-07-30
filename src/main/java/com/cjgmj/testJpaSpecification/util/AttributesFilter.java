@@ -21,4 +21,7 @@ public class AttributesFilter {
 	// Like
 	public static final String LIKE = "%";
 
+	// Function
+	public static final String REPLACE = "replace";
+
 }
