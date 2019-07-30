@@ -10,6 +10,7 @@ import java.util.List;
 
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
 import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -21,12 +22,14 @@ import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.filter.OrderRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.util.AttributesFilter;
+import com.cjgmj.testJpaSpecification.util.DateFilter;
 
 @Component
 public class FilterOrderRequest<T> {
 
-	public Specification<T> filter(FilterRequest filter) {
+	public Specification<T> filter(FilterRequest filter, List<DateFilter> dateFilters) {
 		return (obj, cq, cb) -> {
+
 			List<Predicate> predicates = new ArrayList<>();
 			List<Order> orders = new ArrayList<>();
 
@@ -54,12 +57,48 @@ public class FilterOrderRequest<T> {
 				}
 			}
 
+			List<Predicate> listP = filterDate(cb, obj, filter, dateFilters);
+
+			if (!listP.isEmpty()) {
+				predicates.addAll(listP);
+			}
+
 			cq.orderBy(orders.toArray(new Order[orders.size()]));
+
+			if (predicates.isEmpty()) {
+				return null;
+			}
+
 			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 		};
 	}
 
-	public Predicate getDatePredicate(CriteriaBuilder cb, Root<T> obj, SearchRequest dateFrom, SearchRequest dateUp,
+	private List<Predicate> filterDate(CriteriaBuilder cb, Root<T> obj, FilterRequest filter,
+			List<DateFilter> dateFilters) {
+		List<Predicate> predicates = new ArrayList<>();
+		SearchRequest dateFrom = null;
+		SearchRequest dateUp = null;
+
+		if (filter.getSearch() != null) {
+			for (DateFilter dateFilter : dateFilters) {
+				dateFrom = filter.getSearch().stream()
+						.filter(search -> dateFilter.getDateFrom().equals(search.getField())).findAny().orElse(null);
+				dateUp = filter.getSearch().stream().filter(search -> dateFilter.getDateUp().equals(search.getField()))
+						.findAny().orElse(null);
+
+				if (dateFrom != null || dateUp != null) {
+					Predicate predicate = getDatePredicate(cb, obj, dateFrom, dateUp, dateFilter.getAttribute());
+
+					if (predicate != null) {
+						predicates.add(predicate);
+					}
+				}
+			}
+		}
+		return predicates;
+	}
+
+	private Predicate getDatePredicate(CriteriaBuilder cb, Root<T> obj, SearchRequest dateFrom, SearchRequest dateUp,
 			String field) {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
 
@@ -76,7 +115,26 @@ public class FilterOrderRequest<T> {
 		}
 	}
 
-	public Expression<String> caseInsensitiveAccent(Expression<String> expression, CriteriaBuilder cb) {
+	@SuppressWarnings("unchecked")
+	private Predicate getPredicate(CriteriaBuilder cb, Root<T> obj, String field, String value) {
+		try {
+			String pattern = AttributesFilter.LIKE
+					.concat(Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))
+					.concat(AttributesFilter.LIKE);
+
+			if (!isDate(value)) {
+				return cb.like(caseInsensitiveAccent((Expression<String>) getExpression(field, cb, obj), cb), pattern);
+			} else {
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
+				LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
+				return cb.equal(obj.<LocalDateTime>get(field), cb.literal(date));
+			}
+		} catch (NullPointerException | IllegalArgumentException e) {
+			return null;
+		}
+	}
+
+	private Expression<String> caseInsensitiveAccent(Expression<String> expression, CriteriaBuilder cb) {
 		Expression<String> result = expression;
 		result = cb.lower(result);
 		result = cb.function(AttributesFilter.REPLACE, String.class,
@@ -124,27 +182,9 @@ public class FilterOrderRequest<T> {
 		return result;
 	}
 
-	private Predicate getPredicate(CriteriaBuilder cb, Root<T> obj, String field, String value) {
-		try {
-			String pattern = AttributesFilter.LIKE
-					.concat(Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))
-					.concat(AttributesFilter.LIKE);
-
-			if (!isDate(value)) {
-				return cb.like(caseInsensitiveAccent(obj.get(field), cb), pattern);
-			} else {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
-				LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
-				return cb.equal(obj.<LocalDateTime>get(field), cb.literal(date));
-			}
-		} catch (NullPointerException | IllegalArgumentException e) {
-			return null;
-		}
-	}
-
 	private Order getOrder(CriteriaBuilder cb, Root<T> obj, String field, String value) {
 		try {
-			Expression<?> expression = obj.get(field);
+			Expression<?> expression = getExpression(field, cb, obj);
 
 			if (expression != null) {
 				if (AttributesFilter.DESC.equals(value)) {
@@ -167,6 +207,24 @@ public class FilterOrderRequest<T> {
 		} catch (NullPointerException | DateTimeParseException e) {
 			return false;
 		}
+	}
+
+	private Expression<?> getExpression(String field, CriteriaBuilder cb, Root<T> obj) {
+		Expression<?> expression = null;
+
+		String[] arr = field.split("[.]");
+
+		if (arr.length == 1) {
+			expression = obj.get(field);
+		} else {
+			Join<Object, Object> join = obj.join(arr[0]);
+			for (int i = 1; i < arr.length - 1; i++) {
+				join = join.join(arr[i]);
+			}
+			expression = join.get(arr[arr.length - 1]);
+		}
+
+		return expression;
 	}
 
 }

@@ -4,7 +4,7 @@ INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (998, 'Nol
 INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (997, 'Edelia', 'Ledesma', 'Consultor de reclutamiento independiente', 'edelialedesma@email.com', '1973/11/20 00:00:00');
 INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (996, 'Harold', 'Mojica', 'Técnico de formación', 'haroldmojica@email.com', '1976/05/30 00:00:00');
 INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (995, 'Tácito', 'Zamora', 'Técnico de TIC', 'tacitozamora@email.com', '1982/02/23 00:00:00');
-INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (994, 'Máximo', 'Baez', 'Técnico de cmunicación interna', 'maximobaez@email.com', '1975/11/22 00:00:00');
+INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (994, 'Máximo', 'Baez', 'Técnico de comunicación interna', 'maximobaez@email.com', '1975/11/22 00:00:00');
 INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (993, 'Mariela', 'Griego', 'Técnico de TIC', 'marielagriego@email.com', '1949/12/19 00:00:00');
 INSERT INTO PERSONS (ID, NAME, SURNAME, JOB, EMAIL, BIRTHDATE) VALUES (992, 'Rut', 'Mejía', 'Técnico de selección de personas', 'rutmejia@email.com', '1951/12/30 00:00:00');
 

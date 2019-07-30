@@ -3,8 +3,6 @@ package com.cjgmj.testJpaSpecification.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.criteria.Predicate;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -19,6 +17,7 @@ import com.cjgmj.testJpaSpecification.repository.PersonRepository;
 import com.cjgmj.testJpaSpecification.service.PersonService;
 import com.cjgmj.testJpaSpecification.service.util.FilterOrderRequest;
 import com.cjgmj.testJpaSpecification.util.AttributesFilter;
+import com.cjgmj.testJpaSpecification.util.DateFilter;
 
 @Service
 public class PersonServiceImpl implements PersonService {
@@ -32,35 +31,49 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Page<Person> getPersons(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<Person> f = filterOrderRequest.filter(filter).and(filter(filter));
+		Specification<Person> f = filterOrderRequest.filter(formatSearch(filter), getDateFilter());
+
 		return personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
 
-	private Specification<Person> filter(FilterRequest filter) {
-		return (person, cq, cb) -> {
-			List<Predicate> predicates = new ArrayList<>();
-			SearchRequest birthdateFrom = null;
-			SearchRequest birthdateUp = null;
-
-			if (filter.getSearch() != null) {
-				birthdateFrom = filter.getSearch().stream()
-						.filter(search -> AttributesFilter.BIRTHDATEFROM.equals(search.getField())).findAny()
-						.orElse(null);
-				birthdateUp = filter.getSearch().stream()
-						.filter(search -> AttributesFilter.BIRTHDATEUP.equals(search.getField())).findAny()
-						.orElse(null);
-
-				if (birthdateFrom != null || birthdateUp != null) {
-					Predicate predicate = filterOrderRequest.getDatePredicate(cb, person, birthdateFrom, birthdateUp,
-							AttributesFilter.BIRTHDATE);
-
-					if (predicate != null) {
-						predicates.add(predicate);
+	private FilterRequest formatSearch(FilterRequest filter) {
+		List<SearchRequest> searchR = filter.getSearch();
+		if (searchR != null) {
+			for (SearchRequest search : searchR) {
+				if (search.getField() != null) {
+					switch (search.getField()) {
+					case AttributesFilter.NAME:
+						search.setField("name");
+						break;
+					case AttributesFilter.SURNAME:
+						search.setField("surname");
+						break;
+					case AttributesFilter.JOB:
+						search.setField("job");
+						break;
+					case AttributesFilter.EMAIL:
+						search.setField("email");
+						break;
+					case AttributesFilter.BIRTHDATE:
+						search.setField("birthdate");
+						break;
+					default:
+						break;
 					}
 				}
 			}
-			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
-		};
+		}
+
+		return filter;
+	}
+
+	private List<DateFilter> getDateFilter() {
+		List<DateFilter> arr = new ArrayList<>();
+
+		arr.add(new DateFilter(AttributesFilter.BIRTHDATEFROM, AttributesFilter.BIRTHDATEUP,
+				AttributesFilter.BIRTHDATE));
+
+		return arr;
 	}
 
 }
