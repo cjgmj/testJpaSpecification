@@ -199,16 +199,6 @@ public class FilterOrderRequest<T> {
 		}
 	}
 
-	private Boolean isDate(String value) {
-		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
-			LocalDate.parse(value, formatter);
-			return true;
-		} catch (NullPointerException | DateTimeParseException e) {
-			return false;
-		}
-	}
-
 	private Expression<?> getExpression(String field, CriteriaBuilder cb, Root<T> obj) {
 		Expression<?> expression = null;
 
@@ -225,6 +215,16 @@ public class FilterOrderRequest<T> {
 		}
 
 		return expression;
+	}
+
+	private Boolean isDate(String value) {
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
+			LocalDate.parse(value, formatter);
+			return true;
+		} catch (NullPointerException | DateTimeParseException e) {
+			return false;
+		}
 	}
 
 }
