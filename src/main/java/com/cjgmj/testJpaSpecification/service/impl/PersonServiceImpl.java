@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.cjgmj.testJpaSpecification.entity.Person;
+import com.cjgmj.testJpaSpecification.entity.PersonEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
@@ -26,12 +26,12 @@ public class PersonServiceImpl implements PersonService {
 	private PersonRepository personRepository;
 
 	@Autowired
-	private FilterOrderRequest<Person> filterOrderRequest;
+	private FilterOrderRequest<PersonEntity> filterOrderRequest;
 
 	@Override
-	public Page<Person> getPersons(FilterRequest filter) {
+	public Page<PersonEntity> getPersons(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<Person> f = filterOrderRequest.filter(formatSearch(filter), getDateFilter());
+		Specification<PersonEntity> f = filterOrderRequest.filter(formatSearch(filter), getDateFilter());
 
 		return personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}

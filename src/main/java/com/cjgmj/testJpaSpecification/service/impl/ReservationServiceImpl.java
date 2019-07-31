@@ -8,7 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import com.cjgmj.testJpaSpecification.entity.Reservation;
+import com.cjgmj.testJpaSpecification.entity.ReservationEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
@@ -24,28 +24,28 @@ public class ReservationServiceImpl implements ReservationService {
 	private ReservationRepository reservationRepository;
 
 	@Autowired
-	private FilterOrderRequest<Reservation> filterOrderRequest;
+	private FilterOrderRequest<ReservationEntity> filterOrderRequest;
 
 	@Override
-	public Reservation getReservation(Long id) {
+	public ReservationEntity getReservation(Long id) {
 		return reservationRepository.findById(id).orElse(null);
 	}
 
 	@Override
-	public Page<Reservation> getReservations(FilterRequest filter) {
+	public Page<ReservationEntity> getReservations(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<Reservation> f = filterOrderRequest.filter(formatSearch(filter), null);
+		Specification<ReservationEntity> f = filterOrderRequest.filter(formatSearch(filter), null);
 
 		return reservationRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
 
 	@Override
-	public List<Reservation> getReservations() {
+	public List<ReservationEntity> getReservations() {
 		return reservationRepository.findAll();
 	}
 
 	@Override
-	public void saveReservation(Reservation reservation) {
+	public void saveReservation(ReservationEntity reservation) {
 		reservationRepository.save(reservation);
 	}
 

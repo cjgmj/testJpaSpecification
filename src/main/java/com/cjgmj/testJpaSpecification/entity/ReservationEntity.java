@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @JsonIgnoreProperties(value = "createAt", allowGetters = true)
 @Entity
 @Table(name = "reservations", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
-public class Reservation implements Serializable {
+public class ReservationEntity implements Serializable {
 
 	private static final long serialVersionUID = -126758419208139948L;
 
@@ -37,11 +37,11 @@ public class Reservation implements Serializable {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "person", nullable = false)
-	private Person person;
+	private PersonEntity person;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "room", nullable = false)
-	private Room room;
+	private RoomEntity room;
 
 	@Column(name = "reservationDate", nullable = false)
 	private LocalDateTime reservationDate;
