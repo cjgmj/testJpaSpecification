@@ -30,46 +30,49 @@ public class FilterOrderRequest<T> {
 	public Specification<T> filter(FilterRequest filter, List<DateFilter> dateFilters) {
 		return (obj, cq, cb) -> {
 
-			List<Predicate> predicates = new ArrayList<>();
-			List<Order> orders = new ArrayList<>();
+			if (filter != null) {
+				List<Predicate> predicates = new ArrayList<>();
+				List<Order> orders = new ArrayList<>();
 
-			if (filter.getSearch() != null) {
-				for (SearchRequest search : filter.getSearch()) {
-					if (search.getField() != null) {
-						Predicate predicate = getPredicate(cb, obj, search.getField(), search.getValue());
+				if (filter.getSearch() != null) {
+					for (SearchRequest search : filter.getSearch()) {
+						if (search.getField() != null) {
+							Predicate predicate = getPredicate(cb, obj, search.getField(), search.getValue());
 
-						if (predicate != null) {
-							predicates.add(predicate);
+							if (predicate != null) {
+								predicates.add(predicate);
+							}
 						}
 					}
 				}
-			}
 
-			if (filter.getOrder() != null) {
-				for (OrderRequest order : filter.getOrder()) {
-					if (order.getField() != null) {
-						Order o = getOrder(cb, obj, order.getField(), order.getSort());
+				if (filter.getOrder() != null) {
+					for (OrderRequest order : filter.getOrder()) {
+						if (order.getField() != null) {
+							Order o = getOrder(cb, obj, order.getField(), order.getSort());
 
-						if (o != null) {
-							orders.add(o);
+							if (o != null) {
+								orders.add(o);
+							}
 						}
 					}
 				}
+
+				List<Predicate> listP = filterDate(cb, obj, filter, dateFilters);
+
+				if (!listP.isEmpty()) {
+					predicates.addAll(listP);
+				}
+
+				cq.orderBy(orders.toArray(new Order[orders.size()]));
+
+				if (predicates.isEmpty()) {
+					return null;
+				}
+
+				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
-
-			List<Predicate> listP = filterDate(cb, obj, filter, dateFilters);
-
-			if (!listP.isEmpty()) {
-				predicates.addAll(listP);
-			}
-
-			cq.orderBy(orders.toArray(new Order[orders.size()]));
-
-			if (predicates.isEmpty()) {
-				return null;
-			}
-
-			return cb.and(predicates.toArray(new Predicate[predicates.size()]));
+			return null;
 		};
 	}
 
@@ -79,7 +82,7 @@ public class FilterOrderRequest<T> {
 		SearchRequest dateFrom = null;
 		SearchRequest dateUp = null;
 
-		if (filter.getSearch() != null) {
+		if (filter.getSearch() != null && dateFilters != null) {
 			for (DateFilter dateFilter : dateFilters) {
 				dateFrom = filter.getSearch().stream()
 						.filter(search -> dateFilter.getDateFrom().equals(search.getField())).findAny().orElse(null);
