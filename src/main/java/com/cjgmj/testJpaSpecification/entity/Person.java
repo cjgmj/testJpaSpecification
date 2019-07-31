@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@JsonIgnoreProperties(value = "reservations")
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler", "reservations" })
 @Entity
 @Table(name = "persons", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class Person implements Serializable {
@@ -51,7 +51,7 @@ public class Person implements Serializable {
 	@Column(name = "birthdate", nullable = false)
 	private LocalDateTime birthdate;
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.person")
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "person")
 	private Set<Reservation> reservations;
 
 }

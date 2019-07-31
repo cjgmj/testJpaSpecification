@@ -11,6 +11,13 @@ public class AttributesFilter {
 	public static final String BIRTHDATEFROM = "birthdateFrom";
 	public static final String BIRTHDATEUP = "birthdateUp";
 
+	public static final String PERSONNAME = "personName";
+	public static final String PERSONSURNAME = "personSurname";
+	public static final String ROOMNUMBER = "roomNumber";
+	public static final String ROOMNAME = "roomName";
+	public static final String RESERVATIONDATE = "reservationDate";
+	public static final String DESCRIPTION = "description";
+
 	// Order
 	public static final String ASC = "ascending";
 	public static final String DESC = "descending";

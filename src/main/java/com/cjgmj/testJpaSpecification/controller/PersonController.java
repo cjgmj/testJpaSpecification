@@ -12,7 +12,7 @@ import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.service.PersonService;
 
 @RestController
-@RequestMapping("/persona")
+@RequestMapping("/person")
 public class PersonController {
 
 	@Autowired
