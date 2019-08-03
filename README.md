@@ -1,5 +1,5 @@
 # testJpaSpecification
-[QueryFilterOrder](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/filter/QueryFilterOrder.java) is a class to get dynamic queries using JpaSpecificationExecutor into repository. It is a generic class, so you can use it in your own projects. I'm using Lombok so if you are not using it, you will need change some clases to create default constructor, constructor with all arguments and getters / setters.
+[QueryFilterOrder](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/filter/QueryFilterOrder.java) is a class to get dynamic queries using JpaSpecificationExecutor into repository. It is a generic class, so you can use it on your own projects. I'm using Lombok so if you are not using it, you will need change some classes to create default constructor, constructor with all arguments and getters / setters.
 
 ----
 ## Necessary classes
@@ -18,7 +18,7 @@
 5. Create a method to get the object's attribute which will filter between two dates.
 6. Get a Specification using method 'filter' from queryFilterOrder using the methods created at step 3, 4 and 5.
 
-You can see an example in [PersonServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/PersonServiceImpl.java), also you can set null the methods from step 4 and 5, like you can see in [ReservationServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/ReservationServiceImpl.java).
+You can see an example in [PersonServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/PersonServiceImpl.java). Also you can set null the methods from step 4 and 5, like you can see in [ReservationServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/ReservationServiceImpl.java).
 
 ----
 ## Request example
@@ -40,4 +40,4 @@ It will be POST to use FilterRequest. Here is an example of the object:
         "globalSearch": null
     }
 
-Field can be set with any string, but you should map it at step 3, 4 and 5 with the object's attribute. If the attribute is a join you should concat the string with '.', in [ReservationServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/ReservationServiceImpl.java) you can see an example.
+Field can be set with any string, but you should map it at step 3, 4 and 5 with the object's attribute. If the attribute is a join you should concatenate the string with '.', in [ReservationServiceImpl](https://github.com/cjgmj/testJpaSpecification/blob/master/src/main/java/com/cjgmj/testJpaSpecification/service/impl/ReservationServiceImpl.java) you can see an example.

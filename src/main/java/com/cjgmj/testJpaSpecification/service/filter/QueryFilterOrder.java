@@ -168,7 +168,7 @@ public class QueryFilterOrder<T> {
 	 * @param obj      Root used in {@link #filter(FilterRequest, List, List)}.
 	 * @param dateFrom a {@link SearchRequest} which contain the value to filter.
 	 * @param dateUpa  a {@link SearchRequest} which contain the value to filter.
-	 * @param field    it is the attribute by which it will be filtered.
+	 * @param field    it is the attribute by which will be filtered.
 	 * @return a {@link Predicate} filtering by dates. If dateFrom is
 	 *         {@literal null}, it will return dates lower or equal to dateUp. If
 	 *         dateUp is {@literal null}, it will return dates greater or equal to

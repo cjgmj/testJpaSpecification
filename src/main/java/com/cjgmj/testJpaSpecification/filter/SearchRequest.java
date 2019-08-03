@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
  * <li>value: string to filter.</li>
  * </ul>
  * 
- * @author Carlos
+ * @author cjgmj
  *
  */
 @Data
