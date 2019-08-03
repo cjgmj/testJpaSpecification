@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import com.cjgmj.testJpaSpecification.dto.ReservationPlainDTO;
 import com.cjgmj.testJpaSpecification.entity.ReservationEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
@@ -86,6 +87,11 @@ public class ReservationServiceImpl implements ReservationService {
 		}
 
 		return filter;
+	}
+
+	@Override
+	public List<ReservationPlainDTO> getReservationsPlain() {
+		return reservationRepository.getReservationsPlain();
 	}
 
 }

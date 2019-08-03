@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.cjgmj.testJpaSpecification.dto.ReservationPlainDTO;
 import com.cjgmj.testJpaSpecification.entity.ReservationEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 
@@ -18,5 +19,7 @@ public interface ReservationService {
 	public void saveReservation(ReservationEntity reservation);
 
 	public void deleteReservation(Long id);
+
+	public List<ReservationPlainDTO> getReservationsPlain();
 
 }

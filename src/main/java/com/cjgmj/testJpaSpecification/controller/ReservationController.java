@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cjgmj.testJpaSpecification.dto.ReservationDTO;
+import com.cjgmj.testJpaSpecification.dto.ReservationPlainDTO;
 import com.cjgmj.testJpaSpecification.dto.converter.ReservationConverter;
 import com.cjgmj.testJpaSpecification.entity.ReservationEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
@@ -55,6 +56,11 @@ public class ReservationController {
 	@DeleteMapping("/delete/{id}")
 	public void deleteReservation(@PathVariable Long id) {
 		reservationService.deleteReservation(id);
+	}
+
+	@GetMapping("/plain")
+	public List<ReservationPlainDTO> getReservationsPlain() {
+		return reservationService.getReservationsPlain();
 	}
 
 }
