@@ -26,13 +26,12 @@ public class PersonServiceImpl implements PersonService {
 	private PersonRepository personRepository;
 
 	@Autowired
-	private QueryFilterOrder<PersonEntity> filterOrderRequest;
+	private QueryFilterOrder<PersonEntity> queryFilterOrder;
 
 	@Override
 	public Page<PersonEntity> getPersons(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<PersonEntity> f = filterOrderRequest.filter(formatSearch(filter), getAllFilters(),
-				getDateFilter());
+		Specification<PersonEntity> f = queryFilterOrder.filter(formatSearch(filter), getAllFilters(), getDateFilter());
 
 		return personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
