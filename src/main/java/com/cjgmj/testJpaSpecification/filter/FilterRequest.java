@@ -14,5 +14,6 @@ public class FilterRequest {
 	private PaginationRequest page;
 	private List<SearchRequest> search;
 	private List<OrderRequest> order;
+	private String globalSearch;
 
 }

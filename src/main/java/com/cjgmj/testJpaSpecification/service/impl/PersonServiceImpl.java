@@ -31,7 +31,8 @@ public class PersonServiceImpl implements PersonService {
 	@Override
 	public Page<PersonEntity> getPersons(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<PersonEntity> f = filterOrderRequest.filter(formatSearch(filter), getDateFilter());
+		Specification<PersonEntity> f = filterOrderRequest.filter(formatSearch(filter), getAllFilters(),
+				getDateFilter());
 
 		return personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
@@ -65,6 +66,18 @@ public class PersonServiceImpl implements PersonService {
 		}
 
 		return filter;
+	}
+
+	private List<String> getAllFilters() {
+		List<String> filters = new ArrayList<>();
+
+		filters.add("name");
+		filters.add("surname");
+		filters.add("job");
+		filters.add("email");
+		filters.add("birthdate");
+
+		return filters;
 	}
 
 	private List<DateFilter> getDateFilter() {

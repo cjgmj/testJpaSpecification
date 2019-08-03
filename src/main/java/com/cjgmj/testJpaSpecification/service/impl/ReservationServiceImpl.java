@@ -34,7 +34,7 @@ public class ReservationServiceImpl implements ReservationService {
 	@Override
 	public Page<ReservationEntity> getReservations(FilterRequest filter) {
 		PaginationRequest page = filter.getPage();
-		Specification<ReservationEntity> f = filterOrderRequest.filter(formatSearch(filter), null);
+		Specification<ReservationEntity> f = filterOrderRequest.filter(formatSearch(filter), null, null);
 
 		return reservationRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}

@@ -27,11 +27,12 @@ import com.cjgmj.testJpaSpecification.util.DateFilter;
 @Component
 public class QueryFilterOrder<T> {
 
-	public Specification<T> filter(FilterRequest filter, List<DateFilter> dateFilters) {
+	public Specification<T> filter(FilterRequest filter, List<String> allFilters, List<DateFilter> dateFilters) {
 		return (obj, cq, cb) -> {
 
 			if (filter != null) {
-				List<Predicate> predicates = new ArrayList<>();
+				List<Predicate> predicatesAnd = new ArrayList<>();
+				List<Predicate> predicatesOr = new ArrayList<>();
 				List<Order> orders = new ArrayList<>();
 
 				if (filter.getSearch() != null) {
@@ -40,7 +41,19 @@ public class QueryFilterOrder<T> {
 							Predicate predicate = getPredicate(cb, obj, search.getField(), search.getValue());
 
 							if (predicate != null) {
-								predicates.add(predicate);
+								predicatesAnd.add(predicate);
+							}
+						}
+					}
+				}
+
+				if (filter.getGlobalSearch() != null) {
+					if (allFilters != null) {
+						for (String f : allFilters) {
+							Predicate predicate = getPredicate(cb, obj, f, filter.getGlobalSearch());
+
+							if (predicate != null) {
+								predicatesOr.add(predicate);
 							}
 						}
 					}
@@ -61,16 +74,23 @@ public class QueryFilterOrder<T> {
 				List<Predicate> listP = filterDate(cb, obj, filter, dateFilters);
 
 				if (!listP.isEmpty()) {
-					predicates.addAll(listP);
+					predicatesAnd.addAll(listP);
 				}
 
 				cq.orderBy(orders.toArray(new Order[orders.size()]));
 
-				if (predicates.isEmpty()) {
+				if (predicatesAnd.isEmpty() && predicatesOr.isEmpty()) {
 					return null;
+				} else if (!predicatesAnd.isEmpty() && predicatesOr.isEmpty()) {
+					return cb.and(predicatesAnd.toArray(new Predicate[predicatesAnd.size()]));
+				} else if (predicatesAnd.isEmpty() && !predicatesOr.isEmpty()) {
+					return cb.or(predicatesOr.toArray(new Predicate[predicatesOr.size()]));
+				} else {
+					cb.and(predicatesAnd.toArray(new Predicate[predicatesAnd.size()]));
+
+					return cb.or(predicatesOr.toArray(new Predicate[predicatesOr.size()]));
 				}
 
-				return cb.and(predicates.toArray(new Predicate[predicates.size()]));
 			}
 			return null;
 		};
