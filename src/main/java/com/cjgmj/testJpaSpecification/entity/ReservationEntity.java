@@ -43,10 +43,10 @@ import lombok.NoArgsConstructor;
 				@ColumnResult(name = "description", type = String.class) })) })
 
 @NamedNativeQueries({
-		@NamedNativeQuery(name = "ReservationEntity.getReservationsPlain", resultSetMapping = "reservationPlain", query = "select re.id as id, concat(pe.name, "
+		@NamedNativeQuery(name = "ReservationEntity.getReservationsPlain", resultSetMapping = "reservationPlain", query = "select re.id, concat(pe.name, "
 				+ "concat(' '), pe.surname) as personName, concat('Sala ', concat(ro.name, concat(' (Planta: ', concat(ro.floor, concat(' - Número: ', "
-				+ "concat(ro.number, ')')))))) as roomName, re.reservation_date as reservationDate, re.description as description from persons pe inner join "
-				+ "reservations re on pe.id = re.person inner join rooms ro on re.room = ro.id") })
+				+ "concat(ro.number, ')')))))) as roomName, re.reservation_date as reservationDate, re.description from persons pe inner join reservations re "
+				+ "on pe.id = re.person inner join rooms ro on re.room = ro.id") })
 public class ReservationEntity implements Serializable {
 
 	private static final long serialVersionUID = -126758419208139948L;
