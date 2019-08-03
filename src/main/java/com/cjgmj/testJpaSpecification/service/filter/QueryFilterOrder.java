@@ -345,7 +345,7 @@ public class QueryFilterOrder<T> {
 	/**
 	 * 
 	 * @param value string to format
-	 * @return it return {@literal true} if value is date, if it will not return
+	 * @return it returns {@literal true} if value is date, if it will not returns
 	 *         {@literal false}.
 	 * 
 	 * @since 1.0
