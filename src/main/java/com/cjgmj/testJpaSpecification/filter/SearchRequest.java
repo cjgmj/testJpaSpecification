@@ -4,6 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * It contains:
+ * <ul>
+ * <li>field: attribute to filter.</li>
+ * <li>value: string to filter.</li>
+ * </ul>
+ * 
+ * @author Carlos
+ *
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

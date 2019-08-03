@@ -4,6 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/**
+ * 
+ * It contains:
+ * <ul>
+ * <li>field: attribute to order.</li>
+ * <li>sort: order's type. It should be ascending or descending.</li>
+ * </ul>
+ * 
+ * @author cjgmj
+ *
+ */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
