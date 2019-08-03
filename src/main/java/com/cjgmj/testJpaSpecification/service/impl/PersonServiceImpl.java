@@ -15,7 +15,7 @@ import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.repository.PersonRepository;
 import com.cjgmj.testJpaSpecification.service.PersonService;
-import com.cjgmj.testJpaSpecification.service.util.FilterOrderRequest;
+import com.cjgmj.testJpaSpecification.service.filter.QueryFilterOrder;
 import com.cjgmj.testJpaSpecification.util.AttributesFilter;
 import com.cjgmj.testJpaSpecification.util.DateFilter;
 
@@ -26,7 +26,7 @@ public class PersonServiceImpl implements PersonService {
 	private PersonRepository personRepository;
 
 	@Autowired
-	private FilterOrderRequest<PersonEntity> filterOrderRequest;
+	private QueryFilterOrder<PersonEntity> filterOrderRequest;
 
 	@Override
 	public Page<PersonEntity> getPersons(FilterRequest filter) {

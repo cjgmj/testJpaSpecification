@@ -1,4 +1,4 @@
-package com.cjgmj.testJpaSpecification.service.util;
+package com.cjgmj.testJpaSpecification.service.filter;
 
 import java.text.Normalizer;
 import java.time.LocalDate;
@@ -25,7 +25,7 @@ import com.cjgmj.testJpaSpecification.util.AttributesFilter;
 import com.cjgmj.testJpaSpecification.util.DateFilter;
 
 @Component
-public class FilterOrderRequest<T> {
+public class QueryFilterOrder<T> {
 
 	public Specification<T> filter(FilterRequest filter, List<DateFilter> dateFilters) {
 		return (obj, cq, cb) -> {

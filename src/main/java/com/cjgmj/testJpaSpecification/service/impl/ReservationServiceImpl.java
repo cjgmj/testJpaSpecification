@@ -14,7 +14,7 @@ import com.cjgmj.testJpaSpecification.filter.PaginationRequest;
 import com.cjgmj.testJpaSpecification.filter.SearchRequest;
 import com.cjgmj.testJpaSpecification.repository.ReservationRepository;
 import com.cjgmj.testJpaSpecification.service.ReservationService;
-import com.cjgmj.testJpaSpecification.service.util.FilterOrderRequest;
+import com.cjgmj.testJpaSpecification.service.filter.QueryFilterOrder;
 import com.cjgmj.testJpaSpecification.util.AttributesFilter;
 
 @Service
@@ -24,7 +24,7 @@ public class ReservationServiceImpl implements ReservationService {
 	private ReservationRepository reservationRepository;
 
 	@Autowired
-	private FilterOrderRequest<ReservationEntity> filterOrderRequest;
+	private QueryFilterOrder<ReservationEntity> filterOrderRequest;
 
 	@Override
 	public ReservationEntity getReservation(Long id) {
