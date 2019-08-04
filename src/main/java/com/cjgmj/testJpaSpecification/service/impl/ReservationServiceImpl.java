@@ -61,19 +61,19 @@ public class ReservationServiceImpl implements ReservationService {
 			for (SearchRequest search : searchR) {
 				if (search.getField() != null) {
 					switch (search.getField()) {
-					case AttributesFilter.PERSONNAME:
+					case AttributesFilter.PERSON_NAME:
 						search.setField("person.name");
 						break;
-					case AttributesFilter.PERSONSURNAME:
+					case AttributesFilter.PERSON_SURNAME:
 						search.setField("person.surname");
 						break;
-					case AttributesFilter.ROOMNUMBER:
+					case AttributesFilter.ROOM_NUMBER:
 						search.setField("room.number");
 						break;
-					case AttributesFilter.ROOMNAME:
+					case AttributesFilter.ROOM_NAME:
 						search.setField("room.name");
 						break;
-					case AttributesFilter.RESERVATIONDATE:
+					case AttributesFilter.RESERVATION_DATE:
 						search.setField("reservationDate");
 						break;
 					case AttributesFilter.DESCRIPTION:

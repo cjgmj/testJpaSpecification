@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
  * 
  * It contains:
  * <ul>
- * <li>field: attribute to order.</li>
- * <li>sort: order type. It should be ascending or descending.</li>
+ * <li>key: attribute name in query.</li>
+ * <li>label: header name.</li>
+ * <li>isHidden: it determine if the column is hidden.</li>
  * </ul>
  * 
  * @author cjgmj
@@ -18,9 +19,10 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderRequest {
+public class TableHeader {
 
-	private String field;
-	private String sort;
+	private String key;
+	private String label;
+	private Boolean isHidden;
 
 }

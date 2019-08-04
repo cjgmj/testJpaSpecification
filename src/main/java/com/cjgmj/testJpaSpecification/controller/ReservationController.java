@@ -1,5 +1,6 @@
 package com.cjgmj.testJpaSpecification.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,10 @@ import com.cjgmj.testJpaSpecification.dto.ReservationPlainDTO;
 import com.cjgmj.testJpaSpecification.dto.converter.ReservationConverter;
 import com.cjgmj.testJpaSpecification.entity.ReservationEntity;
 import com.cjgmj.testJpaSpecification.filter.FilterRequest;
+import com.cjgmj.testJpaSpecification.filter.TableFilter;
+import com.cjgmj.testJpaSpecification.filter.TableHeader;
 import com.cjgmj.testJpaSpecification.service.ReservationService;
+import com.cjgmj.testJpaSpecification.util.AttributesFilter;
 
 @RestController
 @RequestMapping("/reservation")
@@ -27,6 +31,50 @@ public class ReservationController {
 
 	@Autowired
 	private ReservationService reservationService;
+
+	@GetMapping("/tableHeader")
+	public List<TableHeader> getTableHeaders() {
+		List<TableHeader> headers = new ArrayList<>();
+
+		headers.add(new TableHeader("id", "ID", Boolean.TRUE));
+		headers.add(new TableHeader("person.name", "Nombre", Boolean.FALSE));
+		headers.add(new TableHeader("person.surname", "Apellidos", Boolean.FALSE));
+		headers.add(new TableHeader("room.name", "Nombre sala", Boolean.FALSE));
+		headers.add(new TableHeader("room.floor", "Planta", Boolean.FALSE));
+		headers.add(new TableHeader("room.number", "Número", Boolean.FALSE));
+		headers.add(new TableHeader("reservationDate", "Fecha de reserva", Boolean.FALSE));
+		headers.add(new TableHeader("description", "Descripción", Boolean.FALSE));
+
+		return headers;
+	}
+
+	@GetMapping("/tableHeaderPlain")
+	public List<TableHeader> getTableHeadersPlain() {
+		List<TableHeader> headers = new ArrayList<>();
+
+		headers.add(new TableHeader("id", "ID", Boolean.TRUE));
+		headers.add(new TableHeader("personName", "Nombre", Boolean.FALSE));
+		headers.add(new TableHeader("roomName", "Nombre de la sala", Boolean.FALSE));
+		headers.add(new TableHeader("reservationDate", "Fecha de reserva", Boolean.FALSE));
+		headers.add(new TableHeader("description", "Descripción", Boolean.FALSE));
+
+		return headers;
+	}
+
+	@GetMapping("/tableFilter")
+	public List<TableFilter> getTableFilters() {
+		List<TableFilter> filters = new ArrayList<>();
+
+		filters.add(new TableFilter(AttributesFilter.PERSON_NAME, "Nombre", TableFilter.TYPE_TEXT, null));
+		filters.add(new TableFilter(AttributesFilter.PERSON_SURNAME, "Apellidos", TableFilter.TYPE_TEXT, null));
+		filters.add(new TableFilter(AttributesFilter.ROOM_NUMBER, "Número de sala", TableFilter.TYPE_TEXT, null));
+		filters.add(new TableFilter(AttributesFilter.ROOM_NAME, "Nombre de la sala", TableFilter.TYPE_TEXT, null));
+		filters.add(
+				new TableFilter(AttributesFilter.RESERVATION_DATE, "Fecha de reserva", TableFilter.TYPE_DATE, "=="));
+		filters.add(new TableFilter(AttributesFilter.DESCRIPTION, "Descripción", TableFilter.TYPE_TEXT, null));
+
+		return filters;
+	}
 
 	@GetMapping("")
 	public List<ReservationDTO> getReservations() {

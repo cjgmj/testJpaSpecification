@@ -82,7 +82,7 @@ public class PersonServiceImpl implements PersonService {
 	private List<DateFilter> getDateFilter() {
 		List<DateFilter> arr = new ArrayList<>();
 
-		arr.add(new DateFilter(AttributesFilter.BIRTHDATEFROM, AttributesFilter.BIRTHDATEUP, "birthdate"));
+		arr.add(new DateFilter(AttributesFilter.BIRTHDATE_FROM, AttributesFilter.BIRTHDATE_UP, "birthdate"));
 
 		return arr;
 	}
