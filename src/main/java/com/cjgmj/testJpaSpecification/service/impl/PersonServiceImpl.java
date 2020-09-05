@@ -30,16 +30,17 @@ public class PersonServiceImpl implements PersonService {
 
 	@Override
 	public Page<PersonEntity> getPersons(FilterRequest filter) {
-		PaginationRequest page = filter.getPage();
-		Specification<PersonEntity> f = queryFilterOrder.filter(formatSearch(filter), getAllFilters(), getDateFilter());
+		final PaginationRequest page = filter.getPage();
+		final Specification<PersonEntity> f = this.queryFilterOrder.filter(this.formatSearch(filter),
+				this.getAllFilters(), this.getDateFilter());
 
-		return personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
+		return this.personRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
 
 	private FilterRequest formatSearch(FilterRequest filter) {
-		List<SearchRequest> searchR = filter.getSearch();
+		final List<SearchRequest> searchR = filter.getSearch();
 		if (searchR != null) {
-			for (SearchRequest search : searchR) {
+			for (final SearchRequest search : searchR) {
 				if (search.getField() != null) {
 					switch (search.getField()) {
 					case AttributesFilter.NAME:
@@ -68,7 +69,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	private List<String> getAllFilters() {
-		List<String> filters = new ArrayList<>();
+		final List<String> filters = new ArrayList<>();
 
 		filters.add("name");
 		filters.add("surname");
@@ -80,7 +81,7 @@ public class PersonServiceImpl implements PersonService {
 	}
 
 	private List<DateFilter> getDateFilter() {
-		List<DateFilter> arr = new ArrayList<>();
+		final List<DateFilter> arr = new ArrayList<>();
 
 		arr.add(new DateFilter(AttributesFilter.BIRTHDATE_FROM, AttributesFilter.BIRTHDATE_UP, "birthdate"));
 

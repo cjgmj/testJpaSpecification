@@ -10,16 +10,16 @@ import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 
 public interface ReservationService {
 
-	public ReservationEntity getReservation(Long id);
+	ReservationEntity getReservation(Long id);
 
-	public Page<ReservationEntity> getReservations(FilterRequest filter);
+	Page<ReservationEntity> getReservations(FilterRequest filter);
 
-	public List<ReservationEntity> getReservations();
+	List<ReservationEntity> getReservations();
 
-	public void saveReservation(ReservationEntity reservation);
+	void saveReservation(ReservationEntity reservation);
 
-	public void deleteReservation(Long id);
+	void deleteReservation(Long id);
 
-	public List<ReservationPlainDTO> getReservationsPlain();
+	List<ReservationPlainDTO> getReservationsPlain();
 
 }

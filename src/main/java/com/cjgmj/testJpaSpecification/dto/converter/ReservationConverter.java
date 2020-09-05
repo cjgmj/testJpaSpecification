@@ -13,13 +13,13 @@ public class ReservationConverter {
 			return null;
 		}
 
-		ReservationDTO dto = new ReservationDTO();
+		final ReservationDTO dto = new ReservationDTO();
 
 		dto.setId(entity.getId());
 		dto.setPerson(PersonConverter.convertToDto(entity.getPerson()));
 		dto.setRoom(RoomConverter.convertToDto(entity.getRoom()));
 
-		LocalDateTime reservationDate = entity.getReservationDate();
+		final LocalDateTime reservationDate = entity.getReservationDate();
 
 		if (reservationDate != null) {
 			dto.setReservationDate(reservationDate.toLocalDate());
@@ -34,13 +34,13 @@ public class ReservationConverter {
 		if (dto == null) {
 			return null;
 		}
-		ReservationEntity entity = new ReservationEntity();
+		final ReservationEntity entity = new ReservationEntity();
 
 		entity.setId(dto.getId());
 		entity.setPerson(PersonConverter.convertToEntity(dto.getPerson()));
 		entity.setRoom(RoomConverter.convertToEntity(dto.getRoom()));
 
-		LocalDate reservationDate = dto.getReservationDate();
+		final LocalDate reservationDate = dto.getReservationDate();
 
 		if (reservationDate != null) {
 			entity.setReservationDate(reservationDate.atStartOfDay());

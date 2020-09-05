@@ -13,7 +13,7 @@ public class PersonConverter {
 			return null;
 		}
 
-		PersonDTO dto = new PersonDTO();
+		final PersonDTO dto = new PersonDTO();
 
 		dto.setId(entity.getId());
 		dto.setName(entity.getName());
@@ -21,7 +21,7 @@ public class PersonConverter {
 		dto.setJob(entity.getJob());
 		dto.setEmail(entity.getEmail());
 
-		LocalDateTime birthdate = entity.getBirthdate();
+		final LocalDateTime birthdate = entity.getBirthdate();
 
 		if (birthdate != null) {
 			dto.setBirthdate(birthdate.toLocalDate());
@@ -35,7 +35,7 @@ public class PersonConverter {
 			return null;
 		}
 
-		PersonEntity entity = new PersonEntity();
+		final PersonEntity entity = new PersonEntity();
 
 		entity.setId(dto.getId());
 		entity.setName(dto.getName());
@@ -43,7 +43,7 @@ public class PersonConverter {
 		entity.setJob(dto.getJob());
 		entity.setEmail(dto.getEmail());
 
-		LocalDate birthdate = dto.getBirthdate();
+		final LocalDate birthdate = dto.getBirthdate();
 
 		if (birthdate != null) {
 			entity.setBirthdate(birthdate.atStartOfDay());

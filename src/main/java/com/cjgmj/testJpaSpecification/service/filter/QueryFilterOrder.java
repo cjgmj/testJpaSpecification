@@ -56,14 +56,15 @@ public class QueryFilterOrder<T> {
 		return (obj, cq, cb) -> {
 
 			if (filter != null) {
-				List<Predicate> predicatesAnd = new ArrayList<>();
-				List<Predicate> predicatesOr = new ArrayList<>();
-				List<Order> orders = new ArrayList<>();
+				final List<Predicate> predicatesAnd = new ArrayList<>();
+				final List<Predicate> predicatesOr = new ArrayList<>();
+				final List<Order> orders = new ArrayList<>();
 
 				if (filter.getSearch() != null) {
-					for (SearchRequest search : filter.getSearch()) {
+					for (final SearchRequest search : filter.getSearch()) {
 						if (search.getField() != null) {
-							Predicate predicate = getPredicate(cb, obj, search.getField(), search.getValue());
+							final Predicate predicate = this.getPredicate(cb, obj, search.getField(),
+									search.getValue());
 
 							if (predicate != null) {
 								predicatesAnd.add(predicate);
@@ -74,8 +75,8 @@ public class QueryFilterOrder<T> {
 
 				if (filter.getGlobalSearch() != null) {
 					if (allFilters != null) {
-						for (String f : allFilters) {
-							Predicate predicate = getPredicate(cb, obj, f, filter.getGlobalSearch());
+						for (final String f : allFilters) {
+							final Predicate predicate = this.getPredicate(cb, obj, f, filter.getGlobalSearch());
 
 							if (predicate != null) {
 								predicatesOr.add(predicate);
@@ -85,9 +86,9 @@ public class QueryFilterOrder<T> {
 				}
 
 				if (filter.getOrder() != null) {
-					for (OrderRequest order : filter.getOrder()) {
+					for (final OrderRequest order : filter.getOrder()) {
 						if (order.getField() != null) {
-							Order o = getOrder(cb, obj, order.getField(), order.getSort());
+							final Order o = this.getOrder(cb, obj, order.getField(), order.getSort());
 
 							if (o != null) {
 								orders.add(o);
@@ -97,7 +98,7 @@ public class QueryFilterOrder<T> {
 				}
 
 				if (dateFilters != null) {
-					List<Predicate> listP = filterDate(cb, obj, filter, dateFilters);
+					final List<Predicate> listP = this.filterDate(cb, obj, filter, dateFilters);
 
 					if (!listP.isEmpty()) {
 						predicatesAnd.addAll(listP);
@@ -138,19 +139,20 @@ public class QueryFilterOrder<T> {
 	 */
 	private List<Predicate> filterDate(CriteriaBuilder cb, Root<T> obj, FilterRequest filter,
 			List<DateFilter> dateFilters) {
-		List<Predicate> predicates = new ArrayList<>();
+		final List<Predicate> predicates = new ArrayList<>();
 		SearchRequest dateFrom = null;
 		SearchRequest dateUp = null;
 
 		if (filter.getSearch() != null) {
-			for (DateFilter dateFilter : dateFilters) {
+			for (final DateFilter dateFilter : dateFilters) {
 				dateFrom = filter.getSearch().stream()
 						.filter(search -> dateFilter.getDateFrom().equals(search.getField())).findAny().orElse(null);
 				dateUp = filter.getSearch().stream().filter(search -> dateFilter.getDateUp().equals(search.getField()))
 						.findAny().orElse(null);
 
 				if (dateFrom != null || dateUp != null) {
-					Predicate predicate = getDatePredicate(cb, obj, dateFrom, dateUp, dateFilter.getAttribute());
+					final Predicate predicate = this.getDatePredicate(cb, obj, dateFrom, dateUp,
+							dateFilter.getAttribute());
 
 					if (predicate != null) {
 						predicates.add(predicate);
@@ -180,17 +182,17 @@ public class QueryFilterOrder<T> {
 	 */
 	private Predicate getDatePredicate(CriteriaBuilder cb, Root<T> obj, SearchRequest dateFrom, SearchRequest dateUp,
 			String field) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
+		final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
 
 		if (dateFrom != null && dateUp == null) {
-			LocalDateTime date = LocalDate.parse(dateFrom.getValue(), formatter).atStartOfDay();
+			final LocalDateTime date = LocalDate.parse(dateFrom.getValue(), formatter).atStartOfDay();
 			return cb.greaterThanOrEqualTo(obj.<LocalDateTime>get(field), cb.literal(date));
 		} else if (dateFrom == null && dateUp != null) {
-			LocalDateTime date = LocalDate.parse(dateUp.getValue(), formatter).atStartOfDay();
+			final LocalDateTime date = LocalDate.parse(dateUp.getValue(), formatter).atStartOfDay();
 			return cb.lessThanOrEqualTo(obj.<LocalDateTime>get(field), cb.literal(date));
 		} else {
-			LocalDateTime dateF = LocalDate.parse(dateFrom.getValue(), formatter).atStartOfDay();
-			LocalDateTime dateU = LocalDate.parse(dateUp.getValue(), formatter).atStartOfDay();
+			final LocalDateTime dateF = LocalDate.parse(dateFrom.getValue(), formatter).atStartOfDay();
+			final LocalDateTime dateU = LocalDate.parse(dateUp.getValue(), formatter).atStartOfDay();
 			return cb.between(obj.<LocalDateTime>get(field), cb.literal(dateF), cb.literal(dateU));
 		}
 	}
@@ -210,15 +212,16 @@ public class QueryFilterOrder<T> {
 	@SuppressWarnings("unchecked")
 	private Predicate getPredicate(CriteriaBuilder cb, Root<T> obj, String field, String value) {
 		try {
-			String pattern = AttributesFilter.LIKE
+			final String pattern = AttributesFilter.LIKE
 					.concat(Normalizer.normalize(value, Normalizer.Form.NFD).replaceAll("[^\\p{ASCII}]", ""))
 					.concat(AttributesFilter.LIKE);
 
-			if (!isDate(value)) {
-				return cb.like(caseInsensitiveAccent((Expression<String>) getExpression(field, cb, obj), cb), pattern);
+			if (!this.isDate(value)) {
+				return cb.like(this.caseInsensitiveAccent((Expression<String>) this.getExpression(field, cb, obj), cb),
+						pattern);
 			} else {
-				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
-				LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
+				final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
+				final LocalDateTime date = LocalDate.parse(value, formatter).atStartOfDay();
 				return cb.equal(obj.<LocalDateTime>get(field), cb.literal(date));
 			}
 		} catch (NullPointerException | IllegalArgumentException e) {
@@ -281,6 +284,8 @@ public class QueryFilterOrder<T> {
 				new Expression[] { result, cb.literal("û"), cb.literal("u") });
 		result = cb.function(AttributesFilter.REPLACE, String.class,
 				new Expression[] { result, cb.literal("ñ"), cb.literal("n") });
+		result = cb.function(AttributesFilter.REPLACE, String.class,
+				new Expression[] { result, cb.literal("-"), cb.literal(" ") });
 		return result;
 	}
 
@@ -298,7 +303,7 @@ public class QueryFilterOrder<T> {
 	 */
 	private Order getOrder(CriteriaBuilder cb, Root<T> obj, String field, String value) {
 		try {
-			Expression<?> expression = getExpression(field, cb, obj);
+			final Expression<?> expression = this.getExpression(field, cb, obj);
 
 			if (expression != null) {
 				if (AttributesFilter.DESC.equals(value)) {
@@ -308,7 +313,7 @@ public class QueryFilterOrder<T> {
 				}
 			}
 			return null;
-		} catch (IllegalArgumentException e) {
+		} catch (final IllegalArgumentException e) {
 			return null;
 		}
 	}
@@ -327,7 +332,7 @@ public class QueryFilterOrder<T> {
 	private Expression<?> getExpression(String field, CriteriaBuilder cb, Root<T> obj) {
 		Expression<?> expression = null;
 
-		String[] arr = field.split("[.]");
+		final String[] arr = field.split("[.]");
 
 		if (arr.length == 1) {
 			expression = obj.get(field);
@@ -353,7 +358,7 @@ public class QueryFilterOrder<T> {
 	 */
 	private Boolean isDate(String value) {
 		try {
-			DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
+			final DateTimeFormatter formatter = DateTimeFormatter.ofPattern(AttributesFilter.FORMATDATE);
 			LocalDate.parse(value, formatter);
 			return true;
 		} catch (NullPointerException | DateTimeParseException e) {

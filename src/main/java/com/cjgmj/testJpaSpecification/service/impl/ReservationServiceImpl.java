@@ -29,36 +29,37 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public ReservationEntity getReservation(Long id) {
-		return reservationRepository.findById(id).orElse(null);
+		return this.reservationRepository.findById(id).orElse(null);
 	}
 
 	@Override
 	public Page<ReservationEntity> getReservations(FilterRequest filter) {
-		PaginationRequest page = filter.getPage();
-		Specification<ReservationEntity> f = filterOrderRequest.filter(formatSearch(filter), null, null);
+		final PaginationRequest page = filter.getPage();
+		final Specification<ReservationEntity> f = this.filterOrderRequest.filter(this.formatSearch(filter), null,
+				null);
 
-		return reservationRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
+		return this.reservationRepository.findAll(f, PageRequest.of(page.getPage(), page.getPageSize()));
 	}
 
 	@Override
 	public List<ReservationEntity> getReservations() {
-		return reservationRepository.findAll();
+		return this.reservationRepository.findAll();
 	}
 
 	@Override
 	public void saveReservation(ReservationEntity reservation) {
-		reservationRepository.save(reservation);
+		this.reservationRepository.save(reservation);
 	}
 
 	@Override
 	public void deleteReservation(Long id) {
-		reservationRepository.deleteById(id);
+		this.reservationRepository.deleteById(id);
 	}
 
 	private FilterRequest formatSearch(FilterRequest filter) {
-		List<SearchRequest> searchR = filter.getSearch();
+		final List<SearchRequest> searchR = filter.getSearch();
 		if (searchR != null) {
-			for (SearchRequest search : searchR) {
+			for (final SearchRequest search : searchR) {
 				if (search.getField() != null) {
 					switch (search.getField()) {
 					case AttributesFilter.PERSON_NAME:
@@ -91,7 +92,7 @@ public class ReservationServiceImpl implements ReservationService {
 
 	@Override
 	public List<ReservationPlainDTO> getReservationsPlain() {
-		return reservationRepository.getReservationsPlain();
+		return this.reservationRepository.getReservationsPlain();
 	}
 
 }

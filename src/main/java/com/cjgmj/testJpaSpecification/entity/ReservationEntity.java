@@ -75,7 +75,7 @@ public class ReservationEntity implements Serializable {
 
 	@PrePersist
 	private void prePersist() {
-		setCreateAt(LocalDateTime.now());
+		this.setCreateAt(LocalDateTime.now());
 	}
 
 }

@@ -34,7 +34,7 @@ public class ReservationController {
 
 	@GetMapping("/tableHeader")
 	public List<TableHeader> getTableHeaders() {
-		List<TableHeader> headers = new ArrayList<>();
+		final List<TableHeader> headers = new ArrayList<>();
 
 		headers.add(new TableHeader("id", "ID", Boolean.TRUE));
 		headers.add(new TableHeader("person.name", "Nombre", Boolean.FALSE));
@@ -50,7 +50,7 @@ public class ReservationController {
 
 	@GetMapping("/tableHeaderPlain")
 	public List<TableHeader> getTableHeadersPlain() {
-		List<TableHeader> headers = new ArrayList<>();
+		final List<TableHeader> headers = new ArrayList<>();
 
 		headers.add(new TableHeader("id", "ID", Boolean.TRUE));
 		headers.add(new TableHeader("personName", "Nombre", Boolean.FALSE));
@@ -63,7 +63,7 @@ public class ReservationController {
 
 	@GetMapping("/tableFilter")
 	public List<TableFilter> getTableFilters() {
-		List<TableFilter> filters = new ArrayList<>();
+		final List<TableFilter> filters = new ArrayList<>();
 
 		filters.add(new TableFilter(AttributesFilter.PERSON_NAME, "Nombre", TableFilter.TYPE_TEXT, null));
 		filters.add(new TableFilter(AttributesFilter.PERSON_SURNAME, "Apellidos", TableFilter.TYPE_TEXT, null));
@@ -78,37 +78,37 @@ public class ReservationController {
 
 	@GetMapping("")
 	public List<ReservationDTO> getReservations() {
-		return reservationService.getReservations().stream().map(r -> ReservationConverter.convertToDto(r))
+		return this.reservationService.getReservations().stream().map(r -> ReservationConverter.convertToDto(r))
 				.collect(Collectors.toList());
 	}
 
 	@PostMapping("")
 	public Page<ReservationDTO> getReservations(@RequestBody FilterRequest filter) {
-		Page<ReservationEntity> reservations = reservationService.getReservations(filter);
-		List<ReservationDTO> listReservations = reservations.getContent().stream()
+		final Page<ReservationEntity> reservations = this.reservationService.getReservations(filter);
+		final List<ReservationDTO> listReservations = reservations.getContent().stream()
 				.map(r -> ReservationConverter.convertToDto(r)).collect(Collectors.toList());
-		return new PageImpl<ReservationDTO>(listReservations, reservations.getPageable(),
+		return new PageImpl<>(listReservations, reservations.getPageable(),
 				reservations.getTotalElements());
 	}
 
 	@GetMapping("/{id}")
 	public ReservationDTO getReservationById(@PathVariable Long id) {
-		return ReservationConverter.convertToDto(reservationService.getReservation(id));
+		return ReservationConverter.convertToDto(this.reservationService.getReservation(id));
 	}
 
 	@PostMapping("/save")
 	public void saveReservation(@RequestBody ReservationDTO reservation) {
-		reservationService.saveReservation(ReservationConverter.convertToEntity(reservation));
+		this.reservationService.saveReservation(ReservationConverter.convertToEntity(reservation));
 	}
 
 	@DeleteMapping("/delete/{id}")
 	public void deleteReservation(@PathVariable Long id) {
-		reservationService.deleteReservation(id);
+		this.reservationService.deleteReservation(id);
 	}
 
 	@GetMapping("/plain")
 	public List<ReservationPlainDTO> getReservationsPlain() {
-		return reservationService.getReservationsPlain();
+		return this.reservationService.getReservationsPlain();
 	}
 
 }

@@ -7,6 +7,6 @@ import com.cjgmj.testJpaSpecification.filter.FilterRequest;
 
 public interface PersonService {
 
-	public Page<PersonEntity> getPersons(FilterRequest filter);
+	Page<PersonEntity> getPersons(FilterRequest filter);
 
 }

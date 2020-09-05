@@ -31,7 +31,7 @@ public class PersonController {
 
 	@GetMapping("/tableHeader")
 	public List<TableHeader> getTableHeaders() {
-		List<TableHeader> headers = new ArrayList<>();
+		final List<TableHeader> headers = new ArrayList<>();
 
 		headers.add(new TableHeader("id", "ID", Boolean.TRUE));
 		headers.add(new TableHeader("name", "Nombre", Boolean.FALSE));
@@ -45,7 +45,7 @@ public class PersonController {
 
 	@GetMapping("/tableFilter")
 	public List<TableFilter> getTableFilters() {
-		List<TableFilter> filters = new ArrayList<>();
+		final List<TableFilter> filters = new ArrayList<>();
 
 		filters.add(new TableFilter(AttributesFilter.NAME, "Nombre", TableFilter.TYPE_TEXT, null));
 		filters.add(new TableFilter(AttributesFilter.SURNAME, "Apellidos", TableFilter.TYPE_TEXT, null));
@@ -62,9 +62,9 @@ public class PersonController {
 
 	@PostMapping("")
 	public Page<PersonDTO> getPersons(@RequestBody FilterRequest filter) {
-		Page<PersonEntity> persons = personService.getPersons(filter);
-		List<PersonDTO> listPersons = persons.getContent().stream().map(p -> PersonConverter.convertToDto(p))
+		final Page<PersonEntity> persons = this.personService.getPersons(filter);
+		final List<PersonDTO> listPersons = persons.getContent().stream().map(p -> PersonConverter.convertToDto(p))
 				.collect(Collectors.toList());
-		return new PageImpl<PersonDTO>(listPersons, persons.getPageable(), persons.getTotalElements());
+		return new PageImpl<>(listPersons, persons.getPageable(), persons.getTotalElements());
 	}
 }

@@ -10,7 +10,7 @@ public class RoomConverter {
 			return null;
 		}
 
-		RoomDTO dto = new RoomDTO();
+		final RoomDTO dto = new RoomDTO();
 
 		dto.setId(entity.getId());
 		dto.setFloor(entity.getFloor());
@@ -29,7 +29,7 @@ public class RoomConverter {
 			return null;
 		}
 
-		RoomEntity entity = new RoomEntity();
+		final RoomEntity entity = new RoomEntity();
 
 		entity.setId(dto.getId());
 		entity.setFloor(dto.getFloor());
